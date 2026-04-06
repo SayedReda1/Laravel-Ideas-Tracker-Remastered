@@ -34,7 +34,6 @@ class RegisteredUserController extends Controller
         ]);
 
         $user = User::create($validated);
-
         Auth::login($user);
 
         return redirect('/')->with('success', 'Registration complete!');

@@ -1,11 +1,21 @@
 <x-layout>
-    <div>
+    <div class="mb-10">
         <header class="py-8 md:py-12">
             <h1 class="text-3xl font-bold">Ideas</h1>
             <p class="text-muted-foreground text-sm mt-2">Capture your thoughts. Make a plan.</p>
+
+            <x-card
+                x-data
+                @click="$dispatch('open-modal', 'new-idea-modal')"
+                is="button"
+                class="mt-10 cursor-pointer h-32 w-full text-left"
+                data-test="create-idea-button"
+            >
+                <p>What's on your mind?</p>
+            </x-card>
         </header>
 
-        <!--Tabs for applying filters-->
+
         <div class="flex items-center justify-left gap-x-2">
             <x-filter-button
                 href="/ideas"
@@ -32,9 +42,7 @@
                     <x-card href="{{ route('idea.show', $idea) }}">
                         <h3 class="text-foreground text-lg">{{ $idea->title }}</h3>
                         <div class="mt-2">
-                            <x-idea.status status="{{ $idea->status }}">
-                                {{ $idea->status->label() }}
-                            </x-idea.status>
+                            <x-idea.status :status="$idea->status" />
                         </div>
                         <div class="mt-5 line-clamp-3">{{ $idea->description }}</div>
                         <div class="mt-5">{{ $idea->created_at->diffForHumans() }}</div>
@@ -46,5 +54,57 @@
                 @endforelse
             </div>
         </div>
+
+        {{-- Modal --}}
+        <x-modal title="New Idea" name="new-idea-modal" class="shadow-xl max-w-2xl w-full max-h-[80vh] overflow-auto">
+            <form x-data="{ status:'pending' }" action="{{ route('idea.store') }}" method="POST">
+                @csrf
+
+                <div class="space-y-6">
+                    <x-form.field
+                        label="Title"
+                        name="title"
+                        type="text"
+                        placeholder="Enter your idea title"
+                        autofocus
+                        data-test="idea-title"
+                    />
+
+                    <div>
+                        <label for="status" class="label">Status</label>
+                        <div class="flex gap-x-3 mt-2">
+                            @foreach(\App\IdeaStatus::cases() as $status)
+                                <button
+                                    type="button"
+                                    @click="status=@js($status->value)"
+                                    class="btn rounded-lg flex-1"
+                                    :class="{'btn-outlined': status !== @js($status->value)}"
+                                    data-test="idea-status-{{ $status->value }}"
+                                >
+                                    {{ $status->label() }}
+                                </button>
+                            @endforeach
+                            <x-form.error name="status" />
+                        </div>
+                        <input type="hidden" name="status" :value="status" />
+                    </div>
+
+                    <x-form.field
+                        label="Description"
+                        name="description"
+                        type="textarea"
+                        placeholder="Describe your idea..."
+                        data-test="idea-description"
+                    />
+
+                    <div class="flex justify-end items-center gap-x-5 mt-4">
+                        <button type="button" @click="show=false">Cancel</button>
+                        <button type="submit" class="btn">Create</button>
+                    </div>
+
+                </div>
+            </form>
+        </x-modal>
+
     </div>
 </x-layout>

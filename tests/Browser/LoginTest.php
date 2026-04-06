@@ -2,7 +2,7 @@
 
 use App\Models\User;
 
-it('logins an user', function () {
+it('logins an user', function (): void {
     User::factory()->create([
         'name' => 'Test User',
         'email' => 'test-user@test.com',
@@ -19,7 +19,7 @@ it('logins an user', function () {
     $this->assertAuthenticated();
 });
 
-it('logs out an user', function () {
+it('logs out an user', function (): void {
     $user = User::factory()->create();
 
     $this->actingAs($user);

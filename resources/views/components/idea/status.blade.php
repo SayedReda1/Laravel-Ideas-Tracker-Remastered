@@ -1,21 +1,21 @@
-@props(['status' => 'pending'])
+@props(['status' => \App\IdeaStatus::PENDING])
 
 @php
     $classes = 'inline-block rounded-full border px-2 py-1 text-xs font-medium ';
 
-    if ($status === 'pending') {
+    if ($status->value === 'pending') {
         $classes .= 'bg-yellow-500/10 text-yellow-500 border-yellow-500/24';
     }
 
-    if ($status === 'in_progress') {
+    if ($status->value === 'in_progress') {
         $classes .= 'bg-blue-500/10 text-blue-500 border-blue-500/24';
     }
 
-    if ($status === 'completed') {
+    if ($status->value === 'completed') {
         $classes .= 'bg-green-500/10 text-green-500 border-green-500/24';
     }
 @endphp
 
 <span {{ $attributes->merge(['class' => $classes]) }}>
-    {{ $slot }}
+    {{ $status->label() }}
 </span>

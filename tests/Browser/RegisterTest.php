@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-it('registers a user', function () {
+it('registers a user', function (): void {
     visit('/register')
         ->fill('name', 'Test User')
         ->fill('email', 'test@test.com')
@@ -15,7 +15,7 @@ it('registers a user', function () {
     expect(Auth::user())->toMatchArray(['name' => 'Test User']);
 });
 
-it('requires a valid email', function () {
+it('requires a valid email', function (): void {
     visit('/register')
         ->fill('name', 'Test User')
         ->fill('email', 'test@.com')
