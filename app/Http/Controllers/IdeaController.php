@@ -11,6 +11,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 
 class IdeaController extends Controller
 {
@@ -72,17 +73,8 @@ class IdeaController extends Controller
      */
     public function show(Idea $idea): View
     {
+        Gate::authorize('access', $idea);
         return view('idea.show', ['idea' => $idea]);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Idea $idea): View
-    {
-        return view('idea.edit', [
-            'idea' => $idea,
-        ]);
     }
 
     /**
@@ -90,6 +82,7 @@ class IdeaController extends Controller
      */
     public function update(Request $request, Idea $idea): RedirectResponse
     {
+        Gate::authorize('access', $idea);
         return to_route('idea.show', $idea);
     }
 
@@ -98,7 +91,8 @@ class IdeaController extends Controller
      */
     public function destroy(Idea $idea): RedirectResponse
     {
-        // authorize
+        Gate::authorize('access', $idea);
+
         $idea->delete();
 
         return to_route('idea.index')

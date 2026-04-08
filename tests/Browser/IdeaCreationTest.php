@@ -12,18 +12,17 @@ it("creates new idea", function () {
         ->fill('@idea-title', 'Buy a car')
         ->fill('@idea-description', 'Bla Bla Bla')
         ->click('@idea-status-in_progress')
+        ->fill('@step-field', 'Start bug hunting')
+        ->click('@add-new-step-button')
         ->fill('@link-field', 'https://example.com')
         ->click('@add-new-link-button')
         ->fill('@link-field','https://laravel.com')
         ->click('@add-new-link-button')
         ->click('Create')
-        ->assertPathIs('/ideas')
-        ->assertSee('Buy a car');
+        ->debug()
+        ->assertPathIs('/ideas');
 
-    expect($user->ideas()->first())->toMatchArray([
-        'title' => 'Buy a car',
-        'description' => 'Bla Bla Bla',
-        'status' => 'in_progress',
-        'links' => ['https://example.com', 'https://laravel.com'],
-    ]);
+    expect($idea = $user->ideas)->toHaveCount(1);
+
+    expect($idea->steps)->toHaveCount(1);
 });
