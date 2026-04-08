@@ -7,7 +7,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\IdeaStoreRequest;
 use App\IdeaStatus;
 use App\Models\Idea;
-use Illuminate\Validation\Rule;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;

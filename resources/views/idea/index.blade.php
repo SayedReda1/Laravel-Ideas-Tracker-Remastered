@@ -122,7 +122,7 @@
                                     name="step"
                                     id="step"
                                     class="input focus:outline-none focus:ring-2 focus:ring-primary flex-1"
-                                    placeholder="https://example.com"
+                                    placeholder="What needs to be done?"
                                     x-model="newStep"
                                     data-test="step-field"
                                 >
