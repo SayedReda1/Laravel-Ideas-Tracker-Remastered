@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Http\Requests\IdeaStoreRequest;
+use App\Http\Requests\IdeaUpdateRequest;
 use App\IdeaStatus;
 use App\Models\Idea;
 use Illuminate\Contracts\View\View;
@@ -60,9 +61,11 @@ class IdeaController extends Controller
         ]);
 
         // Store steps
-        $idea->steps()->createMany(
-            collect($request->steps)->map(fn ($step) => ['description' => $step])
-        );
+        if ($idea->has('steps')) {
+            $idea->steps()->createMany(
+                collect($request->steps)->map(fn ($step) => ['description' => $step])
+            );
+        }
 
         return to_route('idea.index')
             ->with('success', 'Idea created!');
@@ -78,11 +81,44 @@ class IdeaController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * views the edit page
      */
-    public function update(Request $request, Idea $idea): RedirectResponse
+    public function edit(Idea $idea): View
     {
         Gate::authorize('access', $idea);
+        return view('idea.edit', ['idea' => $idea]);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(IdeaUpdateRequest $request, Idea $idea): RedirectResponse
+    {
+        Gate::authorize('access', $idea);
+
+        // Update idea
+        $attributes = [
+            'title' => $request->title,
+            'description' => $request->description,
+            'status' => $request->status,
+            'links' => $request->has('links') ? $request->links : [],
+        ];
+
+        if ($request->has('image')) {
+            $attributes['image_path'] = $request->image->store('ideas', 'public');
+        }
+        
+        $idea->update($attributes);
+
+        // Update steps
+        $idea->steps()->delete();
+
+        if ($request->has('steps')) {
+            $idea->steps()->createMany(
+                collect($request->steps)->map(fn ($step) => ['description' => $step])
+            );
+        }
+
         return to_route('idea.show', $idea);
     }
 

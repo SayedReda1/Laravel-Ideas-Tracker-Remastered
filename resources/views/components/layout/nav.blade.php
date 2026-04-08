@@ -6,16 +6,17 @@
             </a>
         </div>
 
+        <div class="flex gap-x-5 items-center">
         @auth
+            <a href="{{ route('profile.edit') }}">Edit profile</a>
             <form action="/logout" method="post">
                 @csrf
                 <button type="submit" data-test="logout-button">Logout</button>
             </form>
         @else
-            <div class="flex gap-x-5 items-center">
-                <a href="/login">Login</a>
-                <a href="/register" class="btn">Get Started</a>
-            </div>
+            <a href="/login">Login</a>
+            <a href="/register" class="btn">Get Started</a>
         @endauth
+        </div>
     </div>
 </nav>
