@@ -14,7 +14,7 @@
         @else
             <div class="flex gap-x-5 items-center">
                 <a href="/login">Login</a>
-                <a href="/register" class="btn">Register</a>
+                <a href="/register" class="btn">Get Started</a>
             </div>
         @endauth
     </div>

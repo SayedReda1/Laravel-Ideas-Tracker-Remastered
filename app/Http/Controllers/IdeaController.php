@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\IdeaStoreRequest;
 use App\IdeaStatus;
 use App\Models\Idea;
-use App\Models\User;
 use Illuminate\Validation\Rule;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -48,17 +48,13 @@ class IdeaController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request, Idea $idea): RedirectResponse
+    public function store(IdeaStoreRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'title' => ['required', 'string', 'max:255'],
-            'description' => ['nullable', 'string'],
-            'status' => ['required', Rule::enum(IdeaStatus::class)],
-            'links' => ['nullable', 'array'],
-            'links.*' => ['url'],
-        ]);
+        $idea = Auth::user()->ideas()->create($request->except(['_token', 'step', 'steps', 'link']));
 
-        Auth::user()->ideas()->create($validated);
+        $idea->steps()->createMany(
+            collect($request->steps)->map(fn ($step) => ['description' => $step])
+        );
 
         return to_route('idea.index')
             ->with('success', 'Idea created!');

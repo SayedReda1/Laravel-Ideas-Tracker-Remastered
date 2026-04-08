@@ -57,7 +57,13 @@
 
         {{-- Modal --}}
         <x-modal title="New Idea" name="new-idea-modal" class="shadow-xl max-w-2xl w-full max-h-[80vh] overflow-auto">
-            <form x-data="{ status: 'pending', newLink: '', links: [] }" action="{{ route('idea.store') }}" method="POST">
+            <form x-data="{
+                    status: 'pending',
+                    newLink: '',
+                    links: [],
+                    newStep: '',
+                    steps: [],
+                }" action="{{ route('idea.store') }}" method="POST">
                 @csrf
 
                 <div class="space-y-6">
@@ -99,7 +105,51 @@
 
                     <div>
                         <fieldset class="space-y-3">
+                            <legend class="label">Steps</legend>
+                            <template x-for="(step,index) in steps">
+                                <div class="flex gap-x-4 items-center">
+                                    <input type="text" name="steps[]" x-model="step" class="flex-1 input">
+                                    <button
+                                        type="button"
+                                        @click="steps.splice(index,1)"
+                                        class="text-3xl rotate-45 form-muted-icon"
+                                    >+</button>
+                                </div>
+                            </template>
+                            <div class="flex gap-x-4 items-center">
+                                <input
+                                    type="url"
+                                    name="step"
+                                    id="step"
+                                    class="input focus:outline-none focus:ring-2 focus:ring-primary flex-1"
+                                    placeholder="https://example.com"
+                                    x-model="newStep"
+                                    data-test="step-field"
+                                >
+                                <button
+                                    type="button"
+                                    class="text-3xl form-muted-icon"
+                                    @click="steps.push(newStep.trim()); newStep = ''"
+                                    :disabled="newStep.trim().length === 0"
+                                    data-test="add-new-step-button"
+                                >+</button>
+                            </div>
+                        </fieldset>
+                    </div>
+
+                    <div>
+                        <fieldset class="space-y-3">
                             <legend class="label">Links</legend>
+                            <template x-for="(link,index) in links">
+                                <div class="flex gap-x-4 items-center">
+                                    <input type="text" name="links[]" x-model="link" class="flex-1 input">
+                                    <button
+                                        type="button"
+                                        @click="links.splice(index,1)"
+                                        class="text-3xl rotate-45 form-muted-icon"
+                                    >+</button>
+                                </div>
+                            </template>
                             <div class="flex gap-x-4 items-center">
                                 <input
                                     type="url"
@@ -118,18 +168,6 @@
                                     data-test="add-new-link-button"
                                 >+</button>
                             </div>
-
-                            <template x-for="(link,index) in links">
-                                <div class="flex gap-x-4 items-center">
-                                    <input type="text" name="links[]" x-model="link" class="flex-1 input">
-                                    <button
-                                        type="button"
-                                        @click="links.splice(index,1)"
-                                        class="text-3xl rotate-45 form-muted-icon"
-                                    >+</button>
-                                </div>
-                            </template>
-
                         </fieldset>
                     </div>
 
